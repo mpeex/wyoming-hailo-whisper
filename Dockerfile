@@ -46,4 +46,6 @@ RUN ./download_resources.sh
 WORKDIR /home/wyoming_hailo_whisper
 RUN rm -rf hailo_packages
 RUN chmod +x docker-entrypoint.sh
+RUN chmod +x start-hailo-example.sh
+
 ENTRYPOINT ["./docker-entrypoint.sh"]

@@ -4,6 +4,7 @@ import wyoming_hailo_whisper.common.audio_utils as audio_utils
 import numpy as np
 import logging
 
+_LOGGER = logging.getLogger(__name__)
 
 def preprocess(audio, is_nhwc=False, chunk_length = 10, chunk_offset=0, max_duration = 60, overlap=0.0):
     """
@@ -81,15 +82,15 @@ def improve_input_audio(audio, vad=True, low_audio_gain = True):
             audio = apply_gain(audio, gain_db=20)  # Increase by 15 dB
         elif np.max(audio) < 0.2:
             audio = apply_gain(audio, gain_db=10)  # Increase by 10 dB
-        print(f"New max audio level: {np.max(audio)}")
+        _LOGGER.info(f"New max audio level: {np.max(audio)}")
 
     start_time = 0
     if vad:
         start_time = detect_first_speech(audio, audio_utils.SAMPLE_RATE, threshold=0.2, frame_duration=0.2)
         if start_time is not None:
-            logging.info(f"Speech detected at {start_time:.2f} seconds.")
+            _LOGGER.info(f"Speech detected at {start_time:.2f} seconds.")
         else:
-            logging.info("No speech detected.")
+            _LOGGER.info("No speech detected.")
     return audio, start_time
 
 

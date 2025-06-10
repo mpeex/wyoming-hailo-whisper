@@ -62,8 +62,8 @@ async def main() -> None:
     parser.add_argument("--uri", required=True, help="unix:// or tcp://")
     parser.add_argument(
         "--device",
-        default="hailo8l",
-        help="Device to use for inference (default: hailo8l)",
+        default="hailo8",
+        help="Device to use for inference (default: hailo8)",
     )
     parser.add_argument(
         "--language",
@@ -96,7 +96,7 @@ async def main() -> None:
                 description="Hailo accelerated Whisper",
                 attribution=Attribution(
                     name="mpeex",
-                    url="",
+                    url="https://github.com/mpeex/wyoming-hailo-whisper",
                 ),
                 installed=True,
                 version=__version__,
@@ -105,8 +105,8 @@ async def main() -> None:
                         name=model_name,
                         description=model_name,
                         attribution=Attribution(
-                            name="Systran",
-                            url="https://huggingface.co/Systran",
+                            name="hailo.ai",
+                            url="https://hailo.ai",
                         ),
                         installed=True,
                         languages=["en"],
