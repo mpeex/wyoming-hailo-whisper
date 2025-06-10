@@ -16,6 +16,8 @@ __pycache__/
 /dist/
 /local/
 
-hailo_packages/
+hailo_packages/*
 .vscode
 note
+Dockerfile_old
+

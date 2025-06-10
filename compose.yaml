@@ -1,0 +1,15 @@
+services:
+  wyoming-hailo-whisper:
+    container_name: wyoming-hailo-whisper
+    image: "wyoming-hailo-whisper.img:latest"
+    ports:
+      - 10600:10600
+    volumes:
+      - /dev:/dev
+      - /lib/firmware:/lib/firmware
+      - /lib/udev/rules.d:/lib/udev/rules.d
+      - /lib/modules:/lib/modules
+      - /run/user/1000/pipewire-0:/tmp/pipewire-0
+    devices:
+      - /dev/hailo0:/dev/hailo0
+    restart: unless-stopped
