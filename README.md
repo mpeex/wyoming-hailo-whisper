@@ -1,5 +1,5 @@
-# Hailo accelerated Whisper wrapped in a Wyoming server for Home Assistant in a Raspberry Pi 5
-## [wyoming-faster-whisper](https://github.com/rhasspy/wyoming-faster-whisper) adapted for running [Hailo speech recognition example](https://github.com/hailo-ai/Hailo-Application-Code-Examples/tree/main/runtime/hailo-8/python/speech_recognition)
+# Hailo Whisper model in a Wyoming server for Home Assistant 
+## [wyoming-faster-whisper](https://github.com/rhasspy/wyoming-faster-whisper) adapted for running [Hailo speech recognition](https://github.com/hailo-ai/Hailo-Application-Code-Examples/tree/main/runtime/hailo-8/python/speech_recognition)
 
 *Tested on the following configuration* 
 - *Rpi5 running Debian 12 (bookworm)*
