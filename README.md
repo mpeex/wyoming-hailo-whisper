@@ -21,7 +21,7 @@ If v4.20:
 
 1. clone the repo and `cd` to it. Hailo8L is the default, if you want to change to Hailo8, edit `docker-entrypoint.sh` and modify the `--device` parameter accordingly (**not tested**)
 
-2. download in `hailo_packages` folder the following packages from [Hailo Developer Zone](https://hailo.ai/developer-zone/) (requires authentication, filter with HailoRT/ARM64/Linux/Python3.10)
+2. `mkdir hailo_packages` and download in it the following packages from [Hailo Developer Zone](https://hailo.ai/developer-zone/) (requires authentication, filter with HailoRT/ARM64/Linux/Python3.10)
 
 *HailoRT version 4.21* 
 - hailort_4.21.0_arm64.deb
@@ -45,7 +45,7 @@ If v4.20:
 - hostname is the host where the container is running, port is 10600
 - configure HA voice assistant to use `wyoming-hailo-whisper`
 
-6. If everything works fine, consider using `compose.yaml`
+6. If everything works fine, automate the container execution using `compose.yaml` using portainer or similar.
 
 **Troubleshooting**
 
