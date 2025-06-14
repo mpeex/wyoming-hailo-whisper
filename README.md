@@ -1,11 +1,11 @@
 # Hailo Whisper model in a Wyoming server for Home Assistant 
-## [wyoming-faster-whisper](https://github.com/rhasspy/wyoming-faster-whisper) adapted for running [Hailo speech recognition](https://github.com/hailo-ai/Hailo-Application-Code-Examples/tree/main/runtime/hailo-8/python/speech_recognition)
+### A quick conversion of [wyoming-faster-whisper](https://github.com/rhasspy/wyoming-faster-whisper) to run [Hailo Whisper model](https://github.com/hailo-ai/Hailo-Application-Code-Examples/tree/main/runtime/hailo-8/python/speech_recognition)
 
 *Tested on the following configuration* 
 - *Rpi5 running Debian 12 (bookworm)*
 - *Hailo8L (Hailo8 should work, see install section below)*
 - *HailoRT version 4.21*
-- *HA core 2024.11.3 & frontend 20241106.2 (HA OS is not tested)* 
+- *HA Container installation (HA core 2024.11.3, HA frontend 20241106.2) **HA OS is not tested** * 
 
 **Prereq**
 
