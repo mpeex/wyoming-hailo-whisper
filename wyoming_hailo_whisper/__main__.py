@@ -86,7 +86,7 @@ async def main() -> None:
     )
     _LOGGER.debug(args)
 
-    args.language = "en"
+    #args.language = "en"
     model_name = "whisper hailo model"
 
     wyoming_info = Info(
@@ -109,7 +109,7 @@ async def main() -> None:
                             url="https://hailo.ai",
                         ),
                         installed=True,
-                        languages=["en"],
+                        languages=["en","it","de"],
                         version=__version__,
                     )
                 ],
@@ -122,6 +122,7 @@ async def main() -> None:
     encoder_path = get_encoder_hef_path(args.device)
     decoder_path = get_decoder_hef_path(args.device)
     whisper_model = HailoWhisperPipeline(encoder_path, decoder_path, "tiny", True)
+    _LOGGER.info("Device %s\nEncoder %s\nDecoder %s\nLanguage", args.device, encoder_path, decoder_path, args.language)
 
     server = AsyncServer.from_uri(args.uri)
     _LOGGER.info("Ready")
