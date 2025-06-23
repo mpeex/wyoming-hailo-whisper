@@ -109,7 +109,7 @@ async def main() -> None:
                             url="https://hailo.ai",
                         ),
                         installed=True,
-                        languages=["en","it","de"],
+                        languages=["en"],
                         version=__version__,
                     )
                 ],
@@ -122,7 +122,10 @@ async def main() -> None:
     encoder_path = get_encoder_hef_path(args.device)
     decoder_path = get_decoder_hef_path(args.device)
     whisper_model = HailoWhisperPipeline(encoder_path, decoder_path, "tiny", True)
-    _LOGGER.info("Device %s\nEncoder %s\nDecoder %s\nLanguage", args.device, encoder_path, decoder_path, args.language)
+    _LOGGER.info("Device %s", args.device)
+    _LOGGER.info("Encoder %s", encoder_path)
+    _LOGGER.info("Decoder %s", decoder_path)
+    _LOGGER.info("Language %s", args.language)
 
     server = AsyncServer.from_uri(args.uri)
     _LOGGER.info("Ready")
