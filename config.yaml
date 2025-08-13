@@ -8,3 +8,5 @@ arch:
 startup: services
 ports:
   10600/tcp: 10600
+devices: /dev/hailo0
+
