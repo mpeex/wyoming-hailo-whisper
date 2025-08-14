@@ -1,13 +1,30 @@
-# Hailo Whisper model in a Wyoming server for Home Assistant 
-### A quick conversion of [wyoming-faster-whisper](https://github.com/rhasspy/wyoming-faster-whisper) to run [Hailo Whisper model](https://github.com/hailo-ai/Hailo-Application-Code-Examples/tree/main/runtime/hailo-8/python/speech_recognition)
+# Hailo Whisper AddOn for Home Assistant OS
+
+## FOR HASSOS USERS
 
 *Tested on the following configuration* 
-- *Rpi5 running Debian 12 (bookworm)*
-- *Hailo8L (Hailo8 should work, see install section below)*
-- *HailoRT version 4.21*
-- *HA Container installation (HA core 2024.11.3, HA frontend 20241106.2)*
+- *HassOS 16.1 on Rpi5*
+- *Hailo8L (Hailo8 should work)*
 
-**UPDATE: a user reported success in creating an HassOS AddOn, please see section at the bottom of the page for instructions** 
+Familiarize yourself with the [HA AddOn official guide](https://developers.home-assistant.io/docs/add-ons/tutorial)
+1. SSH to your HA machine and go to the `/addons` folder
+2. Create a new directory called `wyoming-hailo-whisper` 
+3. Copy inside `wyoming-hailo-whisper` directory the entire repo content
+4. Create inside `wyoming-hailo-whisper` the folder `hailo_packages`
+5. Download in the folder `hailo_packages` the following packages from [Hailo Developer Zone](https://hailo.ai/developer-zone/) (requires authentication, filter with HailoRT/ARM64/Linux/Python3.10)
+
+*HailoRT version 4.21* 
+- hailort_4.21.0_arm64.deb
+- hailort-4.21.0-cp310-cp310-linux_aarch64.whl
+
+6. The default is to use `Hailo8L` and Whisper `base` model, if you need `Hailo8` or Whisper `tiny` model, edit `run.sh` accordingly 
+7. Proceed from now on with [HA AddOn official guide, step 2](https://developers.home-assistant.io/docs/add-ons/tutorial#step-2-installing-and-testing-your-add-on)
+
+NOTE: HassOS already bundles the Hailo driver. If you are running an old HassOS version, your driver might not be correct.
+
+## FOR HA CONTAINER USERS (NOT TESTED)
+
+*note: this procedure is not tested*
 
 **Prereq**
 
@@ -67,15 +84,3 @@ If everything is fine you should see
 >Press Enter to start recording, or 'q' to quit:
 
 Press Enter and speak via the bluetooth mic, the transcription will be printed at console.
-
-**HassOS users**
-
-The following steps has been proven successfull by a user to generate an HA AddOn.
-Familiarize yourself with the [HA AddOn official guide](https://developers.home-assistant.io/docs/add-ons/tutorial)
-1. SSH to your HA machine and go to the `/addons` folder
-2. Create a new directory called `wyoming-hailo-whisper`
-3. Copy inside `wyoming-hailo-whisper` directory the entire repo content (including `hailo_packages` that has to be manually created, see installation steps 1 and 2 above)
-4. Rename `Dockerfile_HassOS_AddOn` to `Dockerfile`
-5. The default is to use Hailo8L, if you need Hailo8 edit the `--device` parameter in `run.sh` accordingly 
-5. Proceed from now on with [HA AddOn official guide, step 2](https://developers.home-assistant.io/docs/add-ons/tutorial#step-2-installing-and-testing-your-add-on)
-

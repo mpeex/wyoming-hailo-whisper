@@ -1,12 +1,62 @@
 
 FROM ubuntu:22.04
-#FROM ghcr.io/home-assistant/aarch64-base-ubuntu:20.04
-#FROM ghcr.io/hassio-addons/ubuntu-base/aarch64:8e1f32f
+
+# Default ENV
+ENV \
+    LANG="C.UTF-8" \
+    DEBIAN_FRONTEND="noninteractive" \
+    S6_BEHAVIOUR_IF_STAGE2_FAILS=2 \
+    S6_CMD_WAIT_FOR_SERVICES_MAXTIME=0 \
+    S6_CMD_WAIT_FOR_SERVICES=1 \
+    S6_SERVICES_READYTIME=50
+
+# Set shell
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
+# Build args
 ARG S6_OVERLAY_VERSION=3.2.1.0
 ARG BASHIO_VERSION=0.17.1
+ARG TEMPIO_VERSION=2024.11.2
+
+# Base system
+WORKDIR /usr/src
+
+RUN \
+    set -x \
+    && apt-get update && apt-get install -y --no-install-recommends \
+        bash \
+        jq \
+        tzdata \
+        curl \
+        ca-certificates \
+        xz-utils \
+    \
+    && curl -L -f -s "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-aarch64.tar.xz" \
+        | tar Jxvf - -C / \
+    && curl -L -f -s "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz" \
+        | tar Jxvf - -C / \
+    && curl -L -f -s "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-symlinks-arch.tar.xz" \
+        | tar Jxvf - -C / \
+    && curl -L -f -s "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-symlinks-noarch.tar.xz" \
+        | tar Jxvf - -C / \
+    && mkdir -p /etc/fix-attrs.d \
+    && mkdir -p /etc/services.d \
+    \
+    && curl -L -f -s -o /usr/bin/tempio \
+        "https://github.com/home-assistant/tempio/releases/download/${TEMPIO_VERSION}/tempio_aarch64" \
+    && chmod a+x /usr/bin/tempio \
+    \
+    && mkdir -p /usr/src/bashio \
+    && curl -L -f -s "https://github.com/hassio-addons/bashio/archive/v${BASHIO_VERSION}.tar.gz" \
+        | tar -xzf - --strip 1 -C /usr/src/bashio \
+    && mv /usr/src/bashio/lib /usr/lib/bashio \
+    && ln -s /usr/lib/bashio/bashio /usr/bin/bashio \
+    \
+    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /usr/src/*
+
 
 RUN ln -snf /usr/share/zoneinfo/$CONTAINER_TIMEZONE /etc/localtime && echo $CONTAINER_TIMEZONE > /etc/timezone
-ARG DEBIAN_FRONTEND=noninteractive
 
 RUN mkdir /home/wyoming_hailo_whisper
 WORKDIR /home/wyoming_hailo_whisper
@@ -26,21 +76,7 @@ RUN apt-get update && apt-get install -y \
     ffmpeg \
     libportaudio2 \
     wget \
-    xz-utils \
-    curl
-
-ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz /tmp
-RUN tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz
-ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-aarch64.tar.xz /tmp
-RUN tar -C / -Jxpf /tmp/s6-overlay-aarch64.tar.xz
-
-RUN mkdir -p /usr/src/bashio \
-    && curl -L -f -s "https://github.com/hassio-addons/bashio/archive/v${BASHIO_VERSION}.tar.gz" \
-        | tar -xzf - --strip 1 -C /usr/src/bashio \
-    && mv /usr/src/bashio/lib /usr/lib/bashio \
-    && ln -s /usr/lib/bashio/bashio /usr/bin/bashio \
-    && rm -rf /usr/src/*
-
+    nano
 
 RUN dpkg --unpack hailo_packages/hailort_4.21.0_arm64.deb 
 
@@ -53,9 +89,9 @@ RUN rm -rf hailo_packages
 WORKDIR /home/wyoming_hailo_whisper/wyoming_hailo_whisper/app
 RUN ./download_resources.sh
 
-#WORKDIR /home/wyoming_hailo_whisper
-#RUN rm -rf hailo_packages
 RUN chmod a+x /run.sh
 
+# S6-Overlay
+WORKDIR /
 ENTRYPOINT ["/init"]
 CMD ["/run.sh"]

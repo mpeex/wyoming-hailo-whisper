@@ -79,7 +79,7 @@ class HailoWhisperEventHandler(AsyncEventHandler):
                 if chunk_offset < 0:
                     chunk_offset = 0
 
-                chunk_length = 10
+                chunk_length = 10  if self.cli_args.variant == "tiny" else 5
 
                 mel_spectrograms = preprocess(
                     sampled_audio,

@@ -9,51 +9,36 @@ import os
 from wyoming_hailo_whisper.app.hailo_whisper_pipeline import HailoWhisperPipeline
 from wyoming.info import AsrModel, AsrProgram, Attribution, Info
 from wyoming.server import AsyncServer
+from wyoming_hailo_whisper.app.whisper_hef_registry import HEF_REGISTRY
 
 from . import __version__
 from .handler import HailoWhisperEventHandler
 
 _LOGGER = logging.getLogger(__name__)
 
-
-def get_encoder_hef_path(hw_arch):
+def get_hef_path(model_variant: str, hw_arch: str, component: str) -> str:
     """
-    Get the HEF path for the encoder based on the Hailo hardware architecture.
+    Method to retrieve HEF path.
 
     Args:
-        hw_arch (str): Hardware architecture ("hailo8" or "hailo8l").
+        model_variant (str): e.g. "tiny", "base"
+        hw_arch (str): e.g. "hailo8", "hailo8l"
+        component (str): "encoder" or "decoder"
 
     Returns:
-        str: Path to the encoder HEF file.
+        str: Absolute path to the requested HEF file.
     """
-    base_path = os.path.dirname(os.path.abspath(__file__))
-    if hw_arch == "hailo8l":
-        hef_path = os.path.join(base_path, 'app', 'hefs', 'h8l', 'tiny', 'tiny-whisper-encoder-10s_15dB_h8l.hef')
-    else:
-        hef_path = os.path.join(base_path, 'app', 'hefs', 'h8', 'tiny', 'tiny-whisper-encoder-10s_15dB.hef')
+    try:
+        base_path = os.path.dirname(os.path.abspath(__file__))
+        hef_registry = HEF_REGISTRY[model_variant][hw_arch][component]
+        hef_path = os.path.join(base_path, hef_registry)
+    except KeyError as e:
+        raise FileNotFoundError(
+            f"HEF not available for model '{model_variant}' on hardware '{hw_arch}'."
+        ) from e
+
     if not os.path.exists(hef_path):
-        raise FileNotFoundError(f"Encoder HEF file not found: {hef_path}. Please check the path.")
-    return hef_path
-
-
-def get_decoder_hef_path(hw_arch):
-    """
-    Get the HEF path for the decoder based on the Hailo hardware architecture and host type.
-
-    Args:
-        hw_arch (str): Hardware architecture ("hailo8" or "hailo8l").
-        host (str): Host type ("x86" or "arm64").
-
-    Returns:
-        str: Path to the decoder HEF file.
-    """
-    base_path = os.path.dirname(os.path.abspath(__file__))
-    if hw_arch == "hailo8l":
-        hef_path = os.path.join(base_path, 'app', "hefs", "h8l", "tiny", "tiny-whisper-decoder-fixed-sequence-matmul-split_h8l.hef")
-    else:
-        hef_path = os.path.join(base_path, 'app', "hefs", "h8", "tiny", "tiny-whisper-decoder-fixed-sequence-matmul-split.hef")
-    if not os.path.exists(hef_path):
-        raise FileNotFoundError(f"Decoder HEF file not found: {hef_path}. Please check the path.")
+        raise FileNotFoundError(f"HEF file not found at: {hef_path}\nIf not done yet, please run ./download_resources.sh from the app/ folder to download the required HEF files.")
     return hef_path
 
 async def main() -> None:
@@ -62,13 +47,27 @@ async def main() -> None:
     parser.add_argument("--uri", required=True, help="unix:// or tcp://")
     parser.add_argument(
         "--device",
+        type=str,
         default="hailo8",
-        help="Device to use for inference (default: hailo8)",
+        choices=["hailo8", "hailo8l"],
+        help="Hardware architecture to use (default: hailo8)"
+    )
+    parser.add_argument(
+        "--variant",
+        type=str,
+        default="base",
+        choices=["base", "tiny"],
+        help="Whisper variant to use (default: base)"
     )
     parser.add_argument(
         "--language",
         default="en",
         help="Default language to set for transcription",
+    )
+    parser.add_argument(
+        "--multi-process-service", 
+        action="store_true", 
+        help="Enable multi-process service to run other models in addition to Whisper"
     )
     parser.add_argument("--debug", action="store_true", help="Log DEBUG messages")
     parser.add_argument(
@@ -119,13 +118,15 @@ async def main() -> None:
 
     # Load model
     _LOGGER.debug("Loading %s", model_name)
-    encoder_path = get_encoder_hef_path(args.device)
-    decoder_path = get_decoder_hef_path(args.device)
-    whisper_model = HailoWhisperPipeline(encoder_path, decoder_path, "tiny", True)
+    encoder_path = get_hef_path(args.variant, args.device, "encoder")
+    decoder_path = get_hef_path(args.variant, args.device, "decoder")
+
+    whisper_model = HailoWhisperPipeline(encoder_path, decoder_path, args.variant, multi_process_service=args.multi_process_service)
     _LOGGER.info("Device %s", args.device)
     _LOGGER.info("Encoder %s", encoder_path)
     _LOGGER.info("Decoder %s", decoder_path)
     _LOGGER.info("Language %s", args.language)
+    _LOGGER.info("Variant %s", args.variant)
 
     server = AsyncServer.from_uri(args.uri)
     _LOGGER.info("Ready")

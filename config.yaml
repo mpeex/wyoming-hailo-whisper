@@ -1,6 +1,6 @@
 name: "Wyoming Hailo Whisper"
 description: "Hailo Whisper model for HA addon"
-version: "0.0.1"
+version: "0.0.2"
 slug: "hailo_whisper_addon"
 init: false
 arch:
@@ -8,5 +8,11 @@ arch:
 startup: services
 ports:
   10600/tcp: 10600
-devices: /dev/hailo0
-
+devices: ["/dev/hailo0"]
+udev: true
+options:
+  variant: tiny
+  device: hailo8l
+schema:
+  variant: "match(tiny|base)"
+  device: "match(hailo8|hailo8l)"

@@ -12,7 +12,7 @@ class HailoWhisperPipeline:
     A pipeline for running inference using Hailo's Whisper models.
     """
 
-    def __init__(self, encoder_model_path: str, decoder_model_path: str, variant="tiny", host="arm64", multi_process_service=False):
+    def __init__(self, encoder_model_path: str, decoder_model_path: str, variant, host="arm64", multi_process_service=False):
         """
         Initialize the pipeline.
 
