@@ -17,8 +17,8 @@ Familiarize yourself with the [HA AddOn official guide](https://developers.home-
 - hailort_4.21.0_arm64.deb
 - hailort-4.21.0-cp310-cp310-linux_aarch64.whl
 
-6. The default is to use `Hailo8L` and Whisper `base` model, if you need `Hailo8` or Whisper `tiny` model, edit `run.sh` accordingly 
-7. Proceed from now on with [HA AddOn official guide, step 2](https://developers.home-assistant.io/docs/add-ons/tutorial#step-2-installing-and-testing-your-add-on)
+6. Proceed from now on with [HA AddOn official guide, step 2](https://developers.home-assistant.io/docs/add-ons/tutorial#step-2-installing-and-testing-your-add-on)
+7. Use HA Configure panel to configure Hailo device (`hailo8l` or `hailo8`) and Whisper model (`tiny` or `base`)
 
 NOTE: HassOS already bundles the Hailo driver. If you are running an old HassOS version, your driver might not be correct.
 
