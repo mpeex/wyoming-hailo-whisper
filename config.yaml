@@ -11,8 +11,8 @@ ports:
 devices: ["/dev/hailo0"]
 udev: true
 options:
-  variant: tiny
+  variant: base
   device: hailo8l
 schema:
-  variant: "match(tiny|base)"
-  device: "match(hailo8|hailo8l)"
+  variant: list(tiny|base)
+  device: list(hailo8|hailo8l)
